@@ -1,0 +1,816 @@
+openapi: 3.0.1
+info:
+  title: Top Car Service API
+  description: API for workshop customers, vehicles, services, parts, and work orders.
+  version: 1.2.0
+servers:
+  - url: https://{apiId}.execute-api.{region}.amazonaws.com/{stage}
+    variables:
+      apiId:
+        default: api-id
+      region:
+        default: us-east-1
+      stage:
+        default: prod
+security:
+  - BearerAuth: []
+tags:
+  - name: Authentication
+  - name: Clients
+  - name: Vehicles
+  - name: Services
+  - name: Parts and supplies
+  - name: Work orders
+paths:
+  /admin/autenticacao:
+    post:
+      tags: [Authentication]
+      summary: Authenticate an administrator
+      operationId: authenticate
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorizationRequest'
+      responses:
+        '200':
+          description: JWT token created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: POST
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/autenticacao
+        passthroughBehavior: when_no_match
+  /admin/clientes:
+    post:
+      tags: [Clients]
+      summary: Create a client
+      operationId: createClient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientRequest'
+      responses:
+        '201':
+          description: Client created
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: POST
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/clientes
+        passthroughBehavior: when_no_match
+  /admin/clientes/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Clients]
+      summary: Get a client by ID
+      operationId: getClient
+      responses:
+        '200':
+          description: Client found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: GET
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/clientes/{id}
+        passthroughBehavior: when_no_match
+    put:
+      tags: [Clients]
+      summary: Update a client
+      operationId: updateClient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientRequest'
+      responses:
+        '204':
+          description: Client updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: PUT
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/clientes/{id}
+        passthroughBehavior: when_no_match
+    delete:
+      tags: [Clients]
+      summary: Delete a client
+      operationId: deleteClient
+      responses:
+        '204':
+          description: Client deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: DELETE
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/clientes/{id}
+        passthroughBehavior: when_no_match
+  /admin/clientes/cpf/{cpf}:
+    parameters:
+      - name: cpf
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Client CPF.
+    get:
+      tags: [Clients]
+      summary: Get a client by CPF
+      operationId: getClientByCpf
+      responses:
+        '200':
+          description: Client found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: GET
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/clientes/cpf/{cpf}
+        passthroughBehavior: when_no_match
+  /admin/veiculos:
+    post:
+      tags: [Vehicles]
+      summary: Create a vehicle
+      operationId: createVehicle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VehicleRequest'
+      responses:
+        '201':
+          description: Vehicle created
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: POST
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/veiculos
+        passthroughBehavior: when_no_match
+  /admin/veiculos/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Vehicles]
+      summary: Get a vehicle by ID
+      operationId: getVehicle
+      responses:
+        '200':
+          description: Vehicle found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: GET
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/veiculos/{id}
+        passthroughBehavior: when_no_match
+    put:
+      tags: [Vehicles]
+      summary: Update a vehicle
+      operationId: updateVehicle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VehicleRequest'
+      responses:
+        '204':
+          description: Vehicle updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: PUT
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/veiculos/{id}
+        passthroughBehavior: when_no_match
+    delete:
+      tags: [Vehicles]
+      summary: Delete a vehicle
+      operationId: deleteVehicle
+      responses:
+        '204':
+          description: Vehicle deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: DELETE
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/veiculos/{id}
+        passthroughBehavior: when_no_match
+  /admin/servicos:
+    post:
+      tags: [Services]
+      summary: Create a service
+      operationId: createService
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceRequest'
+      responses:
+        '201':
+          description: Service created
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: POST
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/servicos
+        passthroughBehavior: when_no_match
+  /admin/servicos/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Services]
+      summary: Get a service by ID
+      operationId: getService
+      responses:
+        '200':
+          description: Service found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: GET
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/servicos/{id}
+        passthroughBehavior: when_no_match
+    put:
+      tags: [Services]
+      summary: Update a service
+      operationId: updateService
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceRequest'
+      responses:
+        '204':
+          description: Service updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: PUT
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/servicos/{id}
+        passthroughBehavior: when_no_match
+    delete:
+      tags: [Services]
+      summary: Delete a service
+      operationId: deleteService
+      responses:
+        '204':
+          description: Service deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: DELETE
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/servicos/{id}
+        passthroughBehavior: when_no_match
+  /admin/peca-insumos:
+    post:
+      tags: [Parts and supplies]
+      summary: Create a part or supply
+      operationId: createPartOrSupply
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartSupplyRequest'
+      responses:
+        '201':
+          description: Part or supply created
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: POST
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/peca-insumos
+        passthroughBehavior: when_no_match
+  /admin/peca-insumos/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Parts and supplies]
+      summary: Get a part or supply by ID
+      operationId: getPartOrSupply
+      responses:
+        '200':
+          description: Part or supply found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartSupply'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: GET
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/peca-insumos/{id}
+        passthroughBehavior: when_no_match
+    put:
+      tags: [Parts and supplies]
+      summary: Update a part or supply
+      operationId: updatePartOrSupply
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartSupplyRequest'
+      responses:
+        '204':
+          description: Part or supply updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: PUT
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/peca-insumos/{id}
+        passthroughBehavior: when_no_match
+    delete:
+      tags: [Parts and supplies]
+      summary: Delete a part or supply
+      operationId: deletePartOrSupply
+      responses:
+        '204':
+          description: Part or supply deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: DELETE
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/peca-insumos/{id}
+        passthroughBehavior: when_no_match
+  /admin/ordem-servicos:
+    post:
+      tags: [Work orders]
+      summary: Create a work order
+      operationId: createWorkOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderRequest'
+      responses:
+        '201':
+          description: Work order created
+          headers:
+            Location:
+              description: URI of the new work order.
+              schema:
+                type: string
+                format: uri-reference
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: POST
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/ordem-servicos
+        passthroughBehavior: when_no_match
+  /admin/ordem-servicos/{id}/servicos:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    post:
+      tags: [Work orders]
+      summary: Add a service to a work order
+      operationId: addServiceToWorkOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderItemRequest'
+      responses:
+        '200':
+          description: Current work order budget. The current implementation may return null.
+          nullable: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderBudget'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: POST
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/ordem-servicos/{id}/servicos
+        passthroughBehavior: when_no_match
+  /admin/ordem-servicos/{id}/pecas-insumos:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    post:
+      tags: [Work orders]
+      summary: Add a part or supply to a work order
+      operationId: addPartOrSupplyToWorkOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderItemRequest'
+      responses:
+        '200':
+          description: Current work order budget. The current implementation may return null.
+          nullable: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderBudget'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: POST
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/ordem-servicos/{id}/pecas-insumos
+        passthroughBehavior: when_no_match
+  /admin/ordem-servicos/{id}/aprovacao:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    put:
+      tags: [Work orders]
+      summary: Submit a work order for approval
+      operationId: submitWorkOrderForApproval
+      responses:
+        '200':
+          description: Work order after approval submission
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrder'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: PUT
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/admin/ordem-servicos/{id}/aprovacao
+        passthroughBehavior: when_no_match
+  /public/ordem-servicos:
+    get:
+      tags: [Work orders]
+      summary: List work orders
+      operationId: listWorkOrders
+      security: []
+      responses:
+        '200':
+          description: Work orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkOrder'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: GET
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/public/ordem-servicos
+        passthroughBehavior: when_no_match
+  /public/ordem-servicos/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Work orders]
+      summary: Get a public work order by ID
+      operationId: getPublicWorkOrder
+      security: []
+      responses:
+        '200':
+          description: Work order found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrder'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-amazon-apigateway-integration:
+        type: HTTP_PROXY
+        httpMethod: GET
+        connectionType: INTERNET
+        uri: https://${stageVariables.backendHost}/public/ordem-servicos/{id}
+        passthroughBehavior: when_no_match
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT returned by POST /admin/autenticacao.
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: Numeric resource identifier.
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+  responses:
+    BadRequest:
+      description: Invalid request or business rule violation.
+    Unauthorized:
+      description: Missing or invalid JWT bearer token.
+    NotFound:
+      description: Resource not found.
+  schemas:
+    AuthorizationRequest:
+      type: object
+      required: [login, senha]
+      properties:
+        login:
+          type: string
+          minLength: 1
+        senha:
+          type: string
+          format: password
+          minLength: 1
+    AuthorizationResponse:
+      type: object
+      required: [access_token]
+      properties:
+        access_token:
+          type: string
+          description: JWT access token.
+    ClientRequest:
+      type: object
+      properties:
+        cpf:
+          type: string
+        cnpj:
+          type: string
+        nome:
+          type: string
+    Client:
+      allOf:
+        - $ref: '#/components/schemas/ClientRequest'
+    VehicleRequest:
+      type: object
+      properties:
+        placa:
+          type: string
+        marca:
+          type: string
+        modelo:
+          type: string
+        ano:
+          type: integer
+          format: int32
+        codigoCliente:
+          type: integer
+          format: int64
+    Vehicle:
+      allOf:
+        - $ref: '#/components/schemas/VehicleRequest'
+    ServiceRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+        valorMaoDeObra:
+          type: number
+          format: double
+          minimum: 0
+    Service:
+      allOf:
+        - $ref: '#/components/schemas/ServiceRequest'
+    PartSupplyRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+        descricao:
+          type: string
+        fabricante:
+          type: string
+        modelo:
+          type: string
+        quantidade:
+          type: integer
+          format: int32
+        valorUnitario:
+          type: number
+          format: double
+          minimum: 0
+    PartSupply:
+      allOf:
+        - $ref: '#/components/schemas/PartSupplyRequest'
+    WorkOrderRequest:
+      type: object
+      properties:
+        codigoCliente:
+          type: integer
+          format: int64
+        codigoVeiculo:
+          type: integer
+          format: int64
+    WorkOrderItemRequest:
+      type: object
+      properties:
+        codigoItem:
+          type: integer
+          format: int64
+        quantidade:
+          type: integer
+          format: int32
+    WorkOrderBudget:
+      type: object
+      properties:
+        codigoOrdemServico:
+          type: integer
+          format: int64
+        cliente:
+          type: string
+        itens:
+          type: array
+          items:
+            $ref: '#/components/schemas/BudgetItem'
+        dataOrcamento:
+          type: string
+        valorTotal:
+          type: number
+          format: double
+    BudgetItem:
+      type: object
+      properties:
+        descricao:
+          type: string
+        quantidade:
+          type: integer
+          format: int32
+        valorUnitario:
+          type: number
+          format: double
+        valorTotal:
+          type: number
+          format: double
+    WorkOrder:
+      type: object
+      properties:
+        codigo:
+          type: integer
+          format: int64
+        status:
+          type: string
+        cliente:
+          type: string
+        servicos:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/RequestedService'
+        pecasInsumos:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/RequestedPartSupply'
+        dataAbertura:
+          type: string
+    RequestedService:
+      type: object
+      properties:
+        codigoServico:
+          type: integer
+          format: int64
+        nome:
+          type: string
+        valorMaoDeObra:
+          type: number
+          format: double
+    RequestedPartSupply:
+      type: object
+      properties:
+        codigoPecaInsumo:
+          type: integer
+          format: int64
+        nome:
+          type: string
+        quantidade:
+          type: integer
+          format: int32
+        valorUnitario:
+          type: number
+          format: double
+        valorTotal:
+          type: number
+          format: double
+x-amazon-apigateway-importexport-version: '1.0'
